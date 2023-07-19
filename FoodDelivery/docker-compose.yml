@@ -1,0 +1,67 @@
+version: '3.3'
+
+services:
+  #service 1: definition of mysql database
+  db:
+    build:
+      context: db/                          #docker file path (. means root directory)
+      dockerfile: Dockerfile
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql-db
+    env_file: .env
+    tty: true
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - ${MYSQL_EX_PORT}:${MYSQL_IN_PORT}
+    volumes:
+      - ./db-data:/var/lib/mysql/
+    networks:
+      - app-network
+
+  #service 3: definition of your spring-boot app
+  customerservice:                         #it is just a name, which will be used only in this file.
+    image: property-service               #name of the image after dockerfile executes
+    container_name: property-service-app  #name of the container created from docker image
+    env_file: .env
+    build:
+      context: .                          #docker file path (. means root directory)
+      dockerfile: Dockerfile              #docker file name
+    ports:
+      - ${APP_EX_PORT}:${APP_IN_PORT}                      #docker containter port with your os port
+    restart: always
+
+    depends_on:                            #define dependencies of this app
+      - db                                #dependency name (which is defined with this name 'db' in this file earlier)
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: pma
+    env_file: .env
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: ${MYSQL_IN_PORT}
+      PMA_ARBITRARY: 1
+    restart: always
+    volumes:
+      - /sessions
+    ports:
+      - ${PMA_EX_PORT}:${PMA_IN_PORT}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+
+

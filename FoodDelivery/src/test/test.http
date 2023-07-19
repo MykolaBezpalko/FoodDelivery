@@ -1,0 +1,5 @@
+### Start parsing process; Returns "Ready!" if all data successfully writen to DB
+POST http://localhost:8080/establishments
+
+### Returns all establishments with all dishes
+GET http://localhost:8080/establishments

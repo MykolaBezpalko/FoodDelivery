@@ -1,0 +1,53 @@
+plugins {
+	id 'org.springframework.boot' version "$springBootVersion"
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+}
+
+group = 'com.fooddelivery'
+version = "$version"
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+	testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+
+//	Spring Data JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation "mysql:mysql-connector-java:$mySqlConnectorVersion"
+
+//	Validations
+	implementation "javax.validation:validation-api:$validationApiVersion"
+
+//	Jsoup (parsing)
+	implementation "org.jsoup:jsoup:$jsoupVersion"
+
+//	Swagger
+	implementation "io.swagger.core.v3:swagger-annotations:$swaggerAnnotationVersion"
+	implementation "org.springdoc:springdoc-openapi-ui:$springdocOpenapiUiVersion"
+	implementation "org.springdoc:springdoc-openapi-security:$springdocOpenapiUiVersion"
+
+//	Security
+	implementation "org.springframework.boot:spring-boot-starter-security:$springBootVersion"
+	implementation "org.springframework.security:spring-security-oauth2-client:$springOAuth2Version"
+	implementation "org.springframework.security:spring-security-oauth2-jose:$springOAuth2Version"
+	testImplementation "org.springframework.security:spring-security-test:$springOAuth2Version"
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+}
+
+test {
+	useJUnitPlatform()
+}
+
